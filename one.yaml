@@ -1,0 +1,32 @@
+--- # 
+ - hosts: clients
+   remote_user: ansible
+   become: yes
+   tasks: 
+   - name: Validating apache on nodes        
+     yum: 
+       name: httpd
+       state: latest
+   - name: Restarting apache node
+     service:
+       name: httpd
+       state: restarted
+   - name: Creating a file index.html
+     file:
+       name: index.html
+       dest: /var/www/html
+       state: touch
+   - name: Copy contents "Welcome" in index.html
+     copy:
+       content: Welcome
+       dest: /var/www/html/index.html
+   - name: Enable firewall for httpd service
+     firewalld:
+       service: http
+       permanent: true 
+       state: enabled
+   - name: Restarting the firewall services 
+     service: 
+       name: firewalld
+       state: restarted 
+
